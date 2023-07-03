@@ -1,7 +1,7 @@
  <?php
-$servername = "localhost"; // Server name where the app has the DB
-$username = "root"; // user of the DB 
-$password = "root"; // password of the DB
+$servername = "mysql-container"; // Server name where the app has the DB
+$username = "antoine"; // user of the DB 
+$password = "antoinemdp"; // password of the DB
 $dbname = "mono"; // DB name 
 
 // Create connection
@@ -11,4 +11,4 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-?> 
+?>
