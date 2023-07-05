@@ -1,0 +1,16 @@
+stages:
+  - analyse
+
+phpstan:
+  stage: analyse
+  image: php:8.2
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq git
+    - apt-get install unzip
+    - curl -sS https://getcomposer.org/installer | php
+    - php composer.phar install
+  script:
+    - ./vendor/bin/phpstan analyse -l 1 .
+  only:
+    - main
