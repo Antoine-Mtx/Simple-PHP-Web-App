@@ -14,8 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" ) {
 	mail($to, $subject, $body, $headers);
 	// <!-- include file Connection File -->
 	include 'insert.php'; 
- 
 	
 }
-?>
 
