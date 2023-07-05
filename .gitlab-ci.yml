@@ -1,5 +1,7 @@
 stages:
   - analyse
+  - build
+  - deploy
 
 phpstan:
   stage: analyse
@@ -15,5 +17,23 @@ phpstan:
   script:
     # on lance l'analyse phpstan
     - vendor/bin/phpstan analyse -c phpstan.neon
+  only:
+    - main
+
+build:
+  stage: build
+  image: php:8.2
+  before_script:
+  script:
+    - echo "Build app image"
+  only:
+    - main
+
+deploy:
+  stage: build
+  image: php:8.2
+  before_script:
+  script:
+    - echo "Deploy project"
   only:
     - main
