@@ -8,9 +8,12 @@ phpstan:
     - apt-get update -yqq
     - apt-get install -yqq git
     - apt-get install unzip
+    # on installe composer
     - curl -sS https://getcomposer.org/installer | php
+    # on exécute la commande composer install
     - php composer.phar install
   script:
+    # on lance l'analyse phpstan
     - ./vendor/bin/phpstan analyse -l 1 .
   only:
     - main
