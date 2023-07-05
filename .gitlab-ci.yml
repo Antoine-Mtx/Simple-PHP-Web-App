@@ -30,7 +30,7 @@ build:
     - main
 
 deploy:
-  stage: build
+  stage: deploy
   image: php:8.2
   before_script:
   script:
