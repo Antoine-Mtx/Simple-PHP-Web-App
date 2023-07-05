@@ -1,0 +1,25 @@
+name: PHPStan
+
+on:
+  push:
+    branches: [ main ] # Remplacer "main" par le nom de votre branche si besoin
+
+jobs:
+  analyse:
+    name: PHPStan Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0' # Remplacer par la version de PHP utilisée dans votre projet
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: PHPStan Analysis
+        run: vendor/bin/phpstan analyse .
