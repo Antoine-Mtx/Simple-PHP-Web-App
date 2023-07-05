@@ -15,7 +15,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0' # Remplacer par la version de PHP utilisée dans votre projet
+          php-version: '8.2' # Remplacer par la version de PHP utilisée dans votre projet
           tools: composer:v2
 
       - name: Install dependencies
