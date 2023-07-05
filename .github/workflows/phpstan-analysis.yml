@@ -25,4 +25,4 @@ jobs:
 
         # Revue de Code PHPStan
       - name: Run PHPStan static code analyse
-        run: vendor/bin/phpstan analyse .
+        run: vendor/bin/phpstan analyse -c phpstan.neon
