@@ -1,25 +1,28 @@
-name: PHPStan
-
+name: phpstan-analysis
+run-name: ${{ github.actor }} vient de push sur la main !
 on:
   push:
-    branches: [ main ] # Remplacer "main" par le nom de votre branche si besoin
+    branches:
+      - main
 
 jobs:
-  analyse:
-    name: PHPStan Analysis
+  build-and-code-review:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
+    steps:
+      # Récupération du code pour faire les actions
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+        # Config environnement build + installation dépendances
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Remplacer par la version de PHP utilisée dans votre projet
-          tools: composer:v2
+          php-version: '8.2'
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install
 
-      - name: PHPStan Analysis
-        run: vendor/bin/phpstan analyse .
+        # Revue de Code PHPStan
+      - name: Run PHPStan static code analyse
+        run: vendor/bin/phpstan analyse -l 1 .
