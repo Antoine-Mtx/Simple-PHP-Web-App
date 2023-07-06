@@ -22,10 +22,16 @@ phpstan:
 
 build:
   stage: build
-  image: php:8.2
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
   before_script:
+    # login to docker hub
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
   script:
-    - echo "Build app image"
+    # Build and push Docker image
+    - docker build -t antoinemtx/simple-php-web-app:push-on-main .
+    - docker push antoinemtx/simple-php-web-app:push-on-main
   only:
     - main
 
