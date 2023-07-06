@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./../Dockerfile
+          file: Dockerfile
           push: true
           tags: antoinemtx/simple-php-web-app:push-on-main
 
@@ -67,5 +67,3 @@ jobs:
       # Ici, vous auriez normalement un ensemble d'instructions pour déployer votre projet
       - name: Deploy project
         run: echo "Deploy project"
-
-# test
