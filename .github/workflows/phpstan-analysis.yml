@@ -1,61 +1,68 @@
+# Nom du workflow
 name: phpstan-analysis
+
+# Description unique de chaque exécution du workflow
 run-name: ${{ github.actor }} vient de push sur la main !
+
+# Définit l'événement qui déclenchera ce workflow. Ici, le workflow sera déclenché à chaque push sur la branche 'main'.
 on:
   push:
     branches:
       - main
 
+# Début de la définition des jobs que ce workflow va exécuter
 jobs:
-  # PHPStan Code Review
+  # Définit le job de revue de code
   code-review:
+    # Ce job s'exécute sur une instance Ubuntu
     runs-on: ubuntu-latest
-
     steps:
-      # Récupération du code pour faire les actions
+      # Checkout du code dans le runner
       - name: Checkout code
         uses: actions/checkout@v3
-
-        # Config environnement build + installation dépendances
+      # Configuration de PHP 8.2 sur le runner
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-
+      # Installation des dépendances du projet
       - name: Install dependencies
         run: composer install
-
-        # Revue de Code PHPStan
+      # Exécution de PHPStan pour analyser le code
       - name: Run PHPStan static code analyse
         run: vendor/bin/phpstan analyse -c phpstan.neon
 
-  # Build app
-  build-app:
+  # Définit le job de construction de l'application
+  build-image:
+    # Ce job nécessite que le job 'code-review' soit terminé avant de pouvoir commencer
     needs: code-review
+    # Ce job s'exécute également sur une instance Ubuntu
     runs-on: ubuntu-latest
-
     steps:
+      # Checkout du code dans le runner
       - uses: actions/checkout@v3
-
+      # Connexion à Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          # add secrets to connect github and dockerhub
+          # Utilisation des secrets pour connecter GitHub à Docker Hub
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
+      # Construction et push de l'image Docker
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile
+          file: ./../Dockerfile
           push: true
-          tags: luciesio/my-repository:push-on-master
 
-  # Deploy project
+  # Définit le job de déploiement du projet
   deploy-project:
-    needs: build-app
+    # Ce job nécessite que le job 'build-app' soit terminé avant de pouvoir commencer
+    needs: build-image
+    # Ce job s'exécute également sur une instance Ubuntu
     runs-on: ubuntu-latest
-
     steps:
+      # Ici, vous auriez normalement un ensemble d'instructions pour déployer votre projet
       - name: Deploy project
         run: echo "Deploy project"
