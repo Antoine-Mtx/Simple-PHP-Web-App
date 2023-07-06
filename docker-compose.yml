@@ -1,9 +1,9 @@
 version: '3.8'
 services:
   web:
-    image: app-php-image
+    build: .
     volumes:
-      - .:/var/www/html
+      - ./src:/var/www/html
     ports:
       - 8080:80
     depends_on:
