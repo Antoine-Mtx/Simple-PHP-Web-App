@@ -33,7 +33,7 @@ jobs:
         run: vendor/bin/phpstan analyse -c phpstan.neon
 
   # Définit le job de construction de l'application
-  build-image:
+  build-push-image:
     # Ce job nécessite que le job 'code-review' soit terminé avant de pouvoir commencer
     needs: code-review
     # Ce job s'exécute également sur une instance Ubuntu
@@ -55,11 +55,12 @@ jobs:
           context: .
           file: ./../Dockerfile
           push: true
+          tag: antoinemtx/simple-php-web-app:push-on-main
 
   # Définit le job de déploiement du projet
   deploy-project:
     # Ce job nécessite que le job 'build-app' soit terminé avant de pouvoir commencer
-    needs: build-image
+    needs: build-push-image
     # Ce job s'exécute également sur une instance Ubuntu
     runs-on: ubuntu-latest
     steps:
