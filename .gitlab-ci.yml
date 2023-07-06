@@ -6,28 +6,28 @@ stages:
 
 # Job d'analyse du code avec PHPStan
 phpstan:
-  stage: analyse  # Cette tâche fait partie de l'étape "analyse"
+  stage: analyse
   image: php:8.2  # On utilise l'image Docker PHP 8.2 pour exécuter cette tâche
-  before_script:  # Ce script sera exécuté avant la tâche principale
+  before_script:
     - apt-get update -yqq  # Met à jour la liste des paquets disponibles
     - apt-get install -yqq git  # Installe Git
     - apt-get install unzip  # Installe Unzip
     - curl -sS https://getcomposer.org/installer | php  # Télécharge et installe Composer
     - php composer.phar install  # Installe les dépendances du projet avec Composer
-  script:  # Ce script est la tâche principale
+  script:
     - vendor/bin/phpstan analyse -c phpstan.neon  # Exécute PHPStan pour l'analyse du code
   only:
     - main  # Cette tâche ne sera exécutée que sur la branche 'main'
 
 # Job de construction de l'application Docker
 build:
-  stage: build  # Cette tâche fait partie de l'étape "build"
-  image: docker:19.03.12  # On utilise l'image Docker 19.03.12 pour exécuter cette tâche
+  stage: build
+  image: docker:24.0.2  # On utilise l'image Docker 24.0.2 pour exécuter cette tâche
   services:  
-    - docker:19.03.12-dind  # Utilisation du service Docker-in-Docker pour construire des images Docker
-  before_script:  # Ce script sera exécuté avant la tâche principale
+    - docker:24.0.2-dind  # Utilisation du service Docker-in-Docker pour construire des images Docker
+  before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"  # Connexion à Docker Hub
-  script:  # Ce script est la tâche principale
+  script:
     - docker build -t antoinemtx/simple-php-web-app-gitlab:push-on-main .  # Construction de l'image Docker
     - docker push antoinemtx/simple-php-web-app-gitlab:push-on-main  # Envoi de l'image Docker à Docker Hub
   only:
@@ -35,10 +35,10 @@ build:
 
 # Job de déploiement de l'application
 deploy:
-  stage: deploy  # Cette tâche fait partie de l'étape "deploy"
+  stage: deploy
   image: php:8.2  # On utilise l'image Docker PHP 8.2 pour exécuter cette tâche
-  before_script:  # Il n'y a pas de script à exécuter avant la tâche principale dans ce cas
-  script:  # Ce script est la tâche principale
-    - echo "Deploy project"  # On simule un déploiement ici. Normalement, vous aurez des commandes pour déployer réellement votre application
+  before_script:
+  script:
+    - echo "Deploy project"  # On simule un déploiement ici
   only:
     - main  # Cette tâche ne sera exécutée que sur la branche 'main'
