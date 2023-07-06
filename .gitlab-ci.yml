@@ -1,45 +1,44 @@
+# On définit les différentes étapes (stages) de notre pipeline CI/CD
 stages:
-  - analyse
-  - build
-  - deploy
+  - analyse  # 1ère étape : analyse du code
+  - build    # 2ème étape : construction de l'application
+  - deploy   # 3ème étape : déploiement de l'application
 
+# Job d'analyse du code avec PHPStan
 phpstan:
-  stage: analyse
-  image: php:8.2
-  before_script:
-    - apt-get update -yqq
-    - apt-get install -yqq git
-    - apt-get install unzip
-    # on installe composer
-    - curl -sS https://getcomposer.org/installer | php
-    # on exécute la commande composer install
-    - php composer.phar install
-  script:
-    # on lance l'analyse phpstan
-    - vendor/bin/phpstan analyse -c phpstan.neon
+  stage: analyse  # Cette tâche fait partie de l'étape "analyse"
+  image: php:8.2  # On utilise l'image Docker PHP 8.2 pour exécuter cette tâche
+  before_script:  # Ce script sera exécuté avant la tâche principale
+    - apt-get update -yqq  # Met à jour la liste des paquets disponibles
+    - apt-get install -yqq git  # Installe Git
+    - apt-get install unzip  # Installe Unzip
+    - curl -sS https://getcomposer.org/installer | php  # Télécharge et installe Composer
+    - php composer.phar install  # Installe les dépendances du projet avec Composer
+  script:  # Ce script est la tâche principale
+    - vendor/bin/phpstan analyse -c phpstan.neon  # Exécute PHPStan pour l'analyse du code
   only:
-    - main
+    - main  # Cette tâche ne sera exécutée que sur la branche 'main'
 
+# Job de construction de l'application Docker
 build:
-  stage: build
-  image: docker:19.03.12
-  services:
-    - docker:19.03.12-dind
-  before_script:
-    # login to docker hub
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
-  script:
-    # Build and push Docker image
-    - docker build -t antoinemtx/simple-php-web-app-gitlab:push-on-main .
-    - docker push antoinemtx/simple-php-web-app-gitlab:push-on-main
+  stage: build  # Cette tâche fait partie de l'étape "build"
+  image: docker:19.03.12  # On utilise l'image Docker 19.03.12 pour exécuter cette tâche
+  services:  
+    - docker:19.03.12-dind  # Utilisation du service Docker-in-Docker pour construire des images Docker
+  before_script:  # Ce script sera exécuté avant la tâche principale
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"  # Connexion à Docker Hub
+  script:  # Ce script est la tâche principale
+    - docker build -t antoinemtx/simple-php-web-app-gitlab:push-on-main .  # Construction de l'image Docker
+    - docker push antoinemtx/simple-php-web-app-gitlab:push-on-main  # Envoi de l'image Docker à Docker Hub
   only:
-    - main
+    - main  # Cette tâche ne sera exécutée que sur la branche 'main'
 
+# Job de déploiement de l'application
 deploy:
-  stage: deploy
-  image: php:8.2
-  before_script:
-  script:
-    - echo "Deploy project"
+  stage: deploy  # Cette tâche fait partie de l'étape "deploy"
+  image: php:8.2  # On utilise l'image Docker PHP 8.2 pour exécuter cette tâche
+  before_script:  # Il n'y a pas de script à exécuter avant la tâche principale dans ce cas
+  script:  # Ce script est la tâche principale
+    - echo "Deploy project"  # On simule un déploiement ici. Normalement, vous aurez des commandes pour déployer réellement votre application
   only:
-    - main
+    - main  # Cette tâche ne sera exécutée que sur la branche 'main'
