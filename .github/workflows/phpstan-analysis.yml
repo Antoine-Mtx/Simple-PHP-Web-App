@@ -67,3 +67,5 @@ jobs:
       # Ici, vous auriez normalement un ensemble d'instructions pour déployer votre projet
       - name: Deploy project
         run: echo "Deploy project"
+
+# test
